@@ -32,7 +32,7 @@ namespace DrapperDemo
             });
 
             //services.AddScoped<ICompanyRepository, ComapanyRepositoryEF>();
-            services.AddScoped<ICompanyRepository, ComapanyRepository>();
+            services.AddScoped<ICompanyRepository, ComapanyRepositorySP>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             services.AddControllersWithViews();
