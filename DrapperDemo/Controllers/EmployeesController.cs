@@ -11,41 +11,37 @@ using DrapperDemo.Repository;
 
 namespace DrapperDemo.Controllers
 {
-    public class CompaniesController : Controller
+    public class EmployeesController : Controller
     {
         private readonly ICompanyRepository _compRepo;
+        private readonly IEmployeeRepository _empRepo;
 
-        public CompaniesController(ICompanyRepository compRepo)
+        [BindProperty]
+        public Employee Employee { get; set; }
+
+        public EmployeesController(ICompanyRepository compRepo,
+            IEmployeeRepository empRepo)
         {
             _compRepo = compRepo;
+            _empRepo = empRepo;
         }
+
 
         // GET: Companies
         public IActionResult Index()
         {
-            return View(_compRepo.GetAll());
-        }
-
-        // GET: Companies/Details/5
-        public IActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var company = _compRepo.Find(id.GetValueOrDefault());
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return View(company);
+            return View(_empRepo.GetAll());
         }
 
         // GET: Companies/Create
         public IActionResult Create()
         {
+            IEnumerable<SelectListItem> companyList = _compRepo.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.CompanyId.ToString()
+            });
+            ViewBag.CompanyList = companyList;
             return View();
         }
 
@@ -54,14 +50,15 @@ namespace DrapperDemo.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("CompanyId,Name,Address,City,State,PostalCode")] Company company)
+        [ActionName("Create")]
+        public  IActionResult CreatePOST()
         {
             if (ModelState.IsValid)
             {
-                _compRepo.Add(company);
+                _empRepo.Add(Employee);
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            return View(Employee);
         }
 
         // GET: Companies/Edit/5
@@ -72,12 +69,18 @@ namespace DrapperDemo.Controllers
                 return NotFound();
             }
 
-            var company = _compRepo.Find(id.GetValueOrDefault());
-            if (company == null)
+            Employee = _empRepo.Find(id.GetValueOrDefault());
+            IEnumerable<SelectListItem> companyList = _compRepo.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.CompanyId.ToString()
+            });
+            ViewBag.CompanyList = companyList;
+            if (Employee == null)
             {
                 return NotFound();
             }
-            return View(company);
+            return View(Employee);
         }
 
         // POST: Companies/Edit/5
@@ -85,9 +88,9 @@ namespace DrapperDemo.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("CompanyId,Name,Address,City,State,PostalCode")] Company company)
+        public IActionResult Edit(int id)
         {
-            if (id != company.CompanyId)
+            if (id != Employee.EmployeeId)
             {
                 return NotFound();
             }
@@ -95,10 +98,10 @@ namespace DrapperDemo.Controllers
             if (ModelState.IsValid)
             {
 
-                _compRepo.Update(company);
+                _empRepo.Update(Employee);
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            return View(Employee);
         }
 
         // POST: Companies/Delete/5
@@ -109,7 +112,7 @@ namespace DrapperDemo.Controllers
                 return NotFound();
             }
 
-            _compRepo.Remove(id.GetValueOrDefault());
+            _empRepo.Remove(id.GetValueOrDefault());
 
             return RedirectToAction(nameof(Index));
         }
