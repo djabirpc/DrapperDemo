@@ -31,8 +31,7 @@ namespace DrapperDemo
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            //services.AddScoped<ICompanyRepository, ComapanyRepositoryEF>();
-            services.AddScoped<ICompanyRepository, ComapanyRepositorySP>();
+            services.AddScoped<ICompanyRepository, ComapanyRepositoryContib>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             services.AddControllersWithViews();
