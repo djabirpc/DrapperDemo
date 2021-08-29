@@ -33,6 +33,8 @@ namespace DrapperDemo
 
             services.AddScoped<ICompanyRepository, ComapanyRepositoryContib>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IBonusRepository, BonusRepository>();
+            services.AddScoped<IDrapperSprocRepo, DrapperSprocRepo>();
 
             services.AddControllersWithViews();
         }

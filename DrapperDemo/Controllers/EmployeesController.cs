@@ -15,22 +15,31 @@ namespace DrapperDemo.Controllers
     {
         private readonly ICompanyRepository _compRepo;
         private readonly IEmployeeRepository _empRepo;
+        private readonly IBonusRepository _bonRepo;
 
         [BindProperty]
         public Employee Employee { get; set; }
 
         public EmployeesController(ICompanyRepository compRepo,
-            IEmployeeRepository empRepo)
+            IEmployeeRepository empRepo,
+            IBonusRepository bonRepo)
         {
             _compRepo = compRepo;
             _empRepo = empRepo;
+            _bonRepo = bonRepo;
         }
 
 
         // GET: Companies
-        public IActionResult Index()
+        public IActionResult Index(int companyId=0)
         {
-            return View(_empRepo.GetAll());
+            //List<Employee> employees = _empRepo.GetAll();
+            //foreach (Employee obj in employees)
+            //{
+            //    obj.Company = _compRepo.Find(obj.CompanyId);
+            //}
+            List<Employee> employees = _bonRepo.GetEmployeeWithCompany(companyId);
+            return View(employees);
         }
 
         // GET: Companies/Create
@@ -51,11 +60,12 @@ namespace DrapperDemo.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Create")]
-        public  IActionResult CreatePOST()
+        public async Task<IActionResult> CreatePOST()
         {
             if (ModelState.IsValid)
             {
-                _empRepo.Add(Employee);
+                //_empRepo.Add(Employee);
+                await _empRepo.AddAsync(Employee);
                 return RedirectToAction(nameof(Index));
             }
             return View(Employee);
